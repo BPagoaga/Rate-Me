@@ -9,6 +9,7 @@
   "author": "Bernard Pagoaga",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.15.2",
     "mongodb": "^2.2.25",
     "mongoose": "^4.9.4"
   }
