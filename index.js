@@ -6,9 +6,12 @@ var engine = require('ejs-mate');
 var session = require('express-session');
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongo')(session);
+var passport = require('passport');
+var flash = require('connect-flash');
 
 var app = express();
 
+require('./config/passport');
 // create db
 mongoose.connect('mongodb://localhost/rateme');
 // mongose.createConnections() for multiple connexions
@@ -31,11 +34,17 @@ app.use(session({
     store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
 
+// add passport middleware after the session middleware declaratiuon
+app.use(flash);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.get('/', function(req, res, next) {
     res.render('index', { title: 'Rate Me | Homepage' });
 });
 
-require('./routes/user')(app);
+require('./routes/user')(app, passport);
 
 app.listen(3000, function() {
     console.log('running');
