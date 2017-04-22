@@ -24,28 +24,36 @@ app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(bodyParser.json());
 
 app.use(session({
     secret: 'testkey',
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection })
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    })
 }));
 
 // add passport middleware after the session middleware declaratiuon
-app.use(flash);
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', function(req, res, next) {
-    res.render('index', { title: 'Rate Me | Homepage' });
+// general route for the app
+app.get('/', function (req, res, next) {
+    res.render('index', {
+        title: 'Rate Me | Homepage'
+    });
 });
 
+// user related routes
 require('./routes/user')(app, passport);
 
-app.listen(3000, function() {
+app.listen(3000, function () {
     console.log('running');
 });
