@@ -24,7 +24,7 @@ passport.use('local.signup', new LocalStrategy({
         }
 
         if (user) {
-            return done(null, false);
+            return done(null, false, req.flash('error', 'This email is already registered'));
         } else {
             var newUser = new User();
             // passed through input name=fullname

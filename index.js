@@ -1,6 +1,7 @@
 var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var validator = require('express-validator');
 var ejs = require('ejs');
 var engine = require('ejs-mate');
 var session = require('express-session');
@@ -12,6 +13,9 @@ var flash = require('connect-flash');
 var app = express();
 
 require('./config/passport');
+
+//  Mongoose: mpromise (mongoose's default promise library) is deprecated, plug in your own promise library instead: http://mongoosejs.com/docs/promises.html
+mongoose.Promise = global.Promise;
 // create db
 mongoose.connect('mongodb://localhost/rateme');
 // mongose.createConnections() for multiple connexions
@@ -28,6 +32,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+
+app.use(validator());
 
 app.use(session({
     secret: 'testkey',
