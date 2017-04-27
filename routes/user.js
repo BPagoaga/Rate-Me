@@ -6,6 +6,12 @@ module.exports = (app, passport) => {
         });
     });
 
+    app.post('/login', passport.authenticate('local.login', {
+        successRediret: '/',
+        failureRedirect: '/login',
+        failureFlash: true
+    }));
+
     app.get('/signup', (req, res, next) => {
         var errors = req.flash('error');
         res.render('user/signup', {
@@ -19,7 +25,7 @@ module.exports = (app, passport) => {
         successRediret: '/',
         failureRedirect: '/signup',
         failureFlash: true
-    }))
+    }));
 }
 
 const validate = function(req, res, next) {

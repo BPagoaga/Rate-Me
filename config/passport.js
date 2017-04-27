@@ -37,5 +37,25 @@ passport.use('local.signup', new LocalStrategy({
             })
         }
     })
-}
+    }
 ));
+
+passport.use('local.login', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+}, (req, email, password, done) => {
+    User.findOne({'email': email}, (err, user) => {
+        if(err) {
+            return done(err);
+        }
+
+        var messages = [];
+        if (!user || !user.validPassword(password)) {
+            messages.push('This email does not match any user');
+            return done(null, false, req.flash('error', messages));
+        } 
+
+        return done(null, user);
+    })
+}));
