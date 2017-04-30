@@ -51,8 +51,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // general route for the app
-app.get('/', function (req, res, next) {
+app.get('/', function(req, res, next) {
     res.render('index', {
+        title: 'Rate Me'
+    });
+});
+// home route
+app.get('/home', function(req, res, next) {
+    res.render('home', {
         title: 'Rate Me | Homepage'
     });
 });
@@ -60,6 +66,6 @@ app.get('/', function (req, res, next) {
 // user related routes
 require('./routes/user')(app, passport);
 
-app.listen(3000, function () {
+app.listen(3000, function() {
     console.log('running');
 });
