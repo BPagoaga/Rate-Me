@@ -33,6 +33,21 @@ module.exports = (app, passport) => {
         failureRedirect: '/signup',
         failureFlash: true
     }));
+
+    app.get('/forgot', (req, res, next) => {
+        var errors = req.flash('error');
+        res.render('user/forgot', {
+            title: 'Password Forgotten | Rate Me',
+            messages: errors,
+            hasErrors: errors.length > 0
+        })
+    });
+
+    app.post('/forgot', validForgot, passport.authenticate('local.forgot', {
+        successRedirect: '/',
+        failureRedirect: '/login',
+        failureFlash: true
+    }))
 }
 
 const validSignUp = function(req, res, next) {
@@ -55,6 +70,13 @@ const validLogin = function(req, res, next) {
     req.check("password", "Password must contain at least 1 number").matches(/^(?=.*\d)(?=.*[a-z])[0-9a-z]{5,}$/, "i");
 
     return handleErrors(req.validationErrors(), '/login', next);
+}
+
+const validForgot = function(req, res, next) {
+    req.checkBody('email', 'Email is required').notEmpty();
+    req.checkBody('email', 'Email is invalid').isEmail();
+
+    return handleErrors(req.validationErrors(), '/forgot', next);
 }
 
 const handleErrors = function(validationErrors, redirect, next) {
