@@ -1,4 +1,5 @@
 <% layout('layout') %>
+
     <div class="container">
         <br><br>
         <div class="text-center reg_msg">
@@ -6,24 +7,26 @@
         </div>
         <br><br>
 
-        <div class="text-center reg_msg">
-            <h2 class="fancy"><span>LOGIN</span></h2>
-        </div><br>
 
-        <div class="row login">
+        <div class="banner-title text-center reg_msg">
+            <h2 class="fancy"><span>Enter your email</span></h2>
+        </div><br>
+        <p class="text-center">Please enter your email and a reset link will be sent.</p>
+
+        <div class="row forgot">
 
             <% if(hasErrors) { %>
                 <% for(var i=0; i<messages.length; i++) { %>
                     <div class="alert alert-danger">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">
-                            &times;
-                        </a>
+                        &times;
+                    </a>
                         <%= messages[i] %>
                     </div>
                     <% } %>
                         <% } %>
 
-                            <form method="POST" class="" id="loginForm" action="/login">
+                            <form method="POST" class="" id="forgotForm" action="/forgot">
 
                                 <div class="form-group input_group">
                                     <input id="email" class="form-control" name="email" type="text" autocomplete="on" placeholder="EMAIL" style="margin-bottom:20px;">
@@ -35,14 +38,13 @@
 
 
                                 <div class="form-group">
-                                    <input type="submit" id="submit" value="LOGIN" class="form-control btn btn-primary" name="login" style="">
+                                    <input type="submit" id="submit" value="Send" class="form-control btn btn-primary" name="submit" style="">
                                 </div>
 
                             </form>
 
                             <div>
-                                <h4 class="pull-left">Don't have an account ? <a href="/signup">Sign Up</a></h4>
-                                <h4 class="pull-right">Forgot your password ? <a href="/forgot">Click here</a></h4>
+                                <h4 class="text-center">Already reset your password ? <a href="/login">Login</a></h4>
                             </div>
 
 
