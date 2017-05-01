@@ -1,3 +1,7 @@
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
+var async = require('async');
+
 module.exports = (app, passport) => {
 
     app.get('/login', (req, res, next) => {
