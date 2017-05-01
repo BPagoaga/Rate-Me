@@ -26,6 +26,14 @@
                     <% } %>
                         <% } %>
 
+            <% if(hasInfo) { %>
+                    <div class="alert alert-info">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                        &times;
+                    </a>
+                        <%= info %>
+                    </div>
+                        <% } %>
                             <form method="POST" class="" id="forgotForm" action="/forgot">
 
                                 <div class="form-group input_group">

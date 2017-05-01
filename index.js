@@ -13,6 +13,7 @@ var flash = require('connect-flash');
 var app = express();
 
 require('./config/passport');
+require('./secret/secret');
 
 //  Mongoose: mpromise (mongoose's default promise library) is deprecated, plug in your own promise library instead: http://mongoosejs.com/docs/promises.html
 mongoose.Promise = global.Promise;
