@@ -1,6 +1,6 @@
 module.exports = {
     auth: {
-        user: 'test@gmail.com',
-        pass: 'test'
+        user: 'bernard.pagoaga.dev@gmail.com',
+        pass: 'veatnesmam85'
     }
 }

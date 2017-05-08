@@ -60,7 +60,7 @@ module.exports = (app, passport) => {
             },
 
             function(rand, callback) {
-                User.findOne({'email': req.body.email}, (err, user) {
+                User.findOne({'email': req.body.email}, (err, user) => {
                     if(!user) {
                         req.flash('error', 'This user does not exist or email is invalid');
                         return res.redirect('/forgot');
@@ -72,7 +72,7 @@ module.exports = (app, passport) => {
                     user.save((err) => {
                         callback(err, rand, user)
                     });
-                })
+                });
             },
 
             function(rand, user, callback) {
@@ -90,10 +90,10 @@ module.exports = (app, passport) => {
                     subject: 'Rate Me | Reset Password',
                     text: 'You have requested for a password reset. \n\n'+
                         'Please click on the link to complete the process: \n\n'+
-                        'http://localhost/reset'+rand+'\n\n'
+                        'http://localhost:3000/reset/'+rand+'\n\n'
                 };
 
-                smtpTransport.sendMail(mailOptions, (err, response) {
+                smtpTransport.sendMail(mailOptions, (err, response) => {
                     req.flash('info', 'A password token has been sent to '+user.email);
                     return callback(err, user);
                 });
@@ -105,6 +105,7 @@ module.exports = (app, passport) => {
             
             res.redirect('/forgot');
         });
+
     });
 
     app.post('/forgot', validForgot, passport.authenticate('local.forgot', {
@@ -112,6 +113,15 @@ module.exports = (app, passport) => {
         failureRedirect: '/login',
         failureFlash: true
     }))
+
+    app.get('/reset/:token', (req, res) => {
+        var errors = req.flash('error');
+        res.render('user/reset', {
+            title: 'Reset your password',
+            messages: errors,
+            hasErrors: errors.length > 0
+        });
+    });
 }
 
 const validSignUp = function(req, res, next) {
