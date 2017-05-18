@@ -18,24 +18,23 @@ passport.use('local.signup', new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true
 }, (req, email, password, done) => {
-    User.findOne({ 'email': email }, (err, user) => {
+    var newUser = new User();
+   
+    User.findOne({ email }, (err, user) => {
         if (err) {
             return done(err);
         }
 
         if (user) {
             return done(null, false, req.flash('error', 'This email is already registered'));
-        } else {
-            var newUser = new User();
-            // passed through input name=fullname
-            newUser.fullname = req.body.fullname;
-            newUser.email = req.body.email;
-            newUser.password = newUser.encryptPassword(req.body.password);
+        } 
+            
+        // passed through input name=fullname
+        newUser.fullname = req.body.fullname;
+        newUser.email = req.body.email;
+        newUser.password = newUser.encryptPassword(req.body.password);
 
-            newUser.save((err) => {
-                return done(null, newUser);
-            })
-        }
+        return newUser.save(() => done(null, newUser))
     })
 }));
 
@@ -44,14 +43,16 @@ passport.use('local.login', new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true
 }, (req, email, password, done) => {
-    User.findOne({ 'email': email }, (err, user) => {
+    User.findOne({ email }, (err, user) => {
+        var messages = [];
+
         if (err) {
             return done(err);
         }
 
-        var messages = [];
         if (!user || !user.validPassword(password)) {
-            messages.push('This email does not match any user');
+            messages.push('This email does not match any user or email is invalid');
+
             return done(null, false, req.flash('error', messages));
         }
 
@@ -63,14 +64,16 @@ passport.use('local.forgot', new LocalStrategy({
     usernameField: 'email',
     passReqToCallback: true
 }, (req, email, done) => {
-    User.findOne({ 'email': email }, (err, user) => {
+    User.findOne({ email }, (err, user) => {
+        var messages = [];
+
         if (err) {
             return done(err);
         }
 
-        var messages = [];
         if (!user) {
             messages.push('This email does not match any user');
+
             return done(null, false, req.flash('error', messages));
         }
 

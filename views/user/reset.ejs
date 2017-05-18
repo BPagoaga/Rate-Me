@@ -23,7 +23,16 @@
                 <% } %>
             <% } %>
 
-            <form method="POST" class="" id="resetForm" action="/reset">
+            <% if(!hasErrors) { %>
+                <div class="alert alert-success">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                        &times;
+                    </a>
+                    <%= success %>
+                </div>
+            <% } %>
+
+            <form method="POST" class="" id="resetForm">
 
                 <div class="form-group input_group">
                     <input id="password" class="form-control" name="password" type="password" placeholder="PASSWORD" style="margin-bottom:20px;">
