@@ -123,6 +123,7 @@ module.exports = (app, passport) => {
     }))
 
     app.get('/reset/:token', (req, res) => {
+        console.log('get reset')
         var errors = req.flash('error');
         var success = req.flash('success')
 
@@ -143,7 +144,8 @@ module.exports = (app, passport) => {
             title: 'Reset your password',
             messages: errors,
             hasErrors: errors.length > 0,
-            success
+            success,
+            hasSuccess: success.length > 0
         });
     });
 
