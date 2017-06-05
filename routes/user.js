@@ -7,6 +7,24 @@ var User = require('../models/user');
 var secret = require('../secret/secret');
 
 module.exports = (app, passport) => {
+    // general route for the app
+    app.get('/', function(req, res, next) {
+        console.log(req.session.cookie.originalMaxAge)
+        if (req.session.cookie.originalMaxAge !== null) {
+            res.redirect('/home')
+        } else {
+            res.render('index', {
+                title: 'Rate Me'
+            });
+
+        }
+    });
+    // home route
+    app.get('/home', function(req, res, next) {
+        res.render('home', {
+            title: 'Rate Me | Homepage'
+        });
+    });
 
     app.get('/login', (req, res, next) => {
         var errors = req.flash('error');
@@ -19,10 +37,29 @@ module.exports = (app, passport) => {
     });
 
     app.post('/login', validLogin, passport.authenticate('local.login', {
-        successRedirect: '/home',
+        //successRedirect: '/home',
         failureRedirect: '/login',
         failureFlash: true
-    }));
+    }), (req, res) => {
+        if (req.body.rememberme) {
+            req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
+            console.log(req.session.cookie.maxAge)
+        } else {
+            req.session.cookie.expires = null;
+        }
+
+        res.redirect('/home');
+    });
+
+    app.get('/logout', (req, res, next) => {
+        var errors = req.flash('error');
+
+        req.logout();
+
+        req.session.destroy(err => {
+            res.redirect('/');
+        })
+    });
 
     app.get('/signup', (req, res, next) => {
         var errors = req.flash('error');
@@ -123,7 +160,6 @@ module.exports = (app, passport) => {
     }))
 
     app.get('/reset/:token', (req, res) => {
-        console.log('get reset')
         var errors = req.flash('error');
         var success = req.flash('success')
 
@@ -150,7 +186,6 @@ module.exports = (app, passport) => {
     });
 
     app.post('/reset/:token', (req, res) => {
-        console.log('post')
         async.waterfall([
             function(callback) {
                 var errors = [],
@@ -172,7 +207,7 @@ module.exports = (app, passport) => {
                     req.checkBody('password', 'Password must have at least 5 characters').isLength({
                         min: 5
                     });
-                    req.check('password', 'Password must contain at least 1 number').matches(/^(?=.*\d)(?=.*[a-z])[0-9a-z]{5,}$/, 'i');
+                    req.checkBody('password', 'Password must contain at least 1 number').matches(/^(?=.*\d)(?=.*[a-z])[0-9a-z]{5,}$/, 'i');
 
                     errors = req.validationErrors()
 
@@ -183,11 +218,11 @@ module.exports = (app, passport) => {
                                 messages.push(error.msg)
                             })
 
-                            errors = req.flash('error')
-
+                            var errors = req.flash('error')
+                            req.flash('error', messages)
                             res.redirect('/reset/' + req.params.token)
                         } else {
-                            user.password = req.body.password
+                            user.password = user.encryptPassword(req.body.password)
                             user.passwordResetToken = null
                             user.passwordResetExpires = null
 
@@ -201,11 +236,11 @@ module.exports = (app, passport) => {
                         res.redirect('/reset/' + req.params.token)
                     }
 
-                   /* res.render('user/reset', {
-                        title: 'Reset your password',
-                        messages: errors,
-                        hasErrors: errors.length > 0
-                    });*/
+                    /* res.render('user/reset', {
+                         title: 'Reset your password',
+                         messages: errors,
+                         hasErrors: errors.length > 0
+                     });*/
                 })
             },
 
@@ -237,7 +272,8 @@ module.exports = (app, passport) => {
                         title: 'Reset your password',
                         messages: error,
                         hasErrors: error.length > 0,
-                        success
+                        success,
+                        hasSuccess: success.length > 0
                     })
                 });
             }
@@ -272,7 +308,7 @@ const validSignUp = function(req, res, next) {
     req.checkBody('password', 'Password must have at least 5 characters').isLength({
         min: 5
     });
-    req.check('password', 'Password must contain at least 1 number').matches(/^(?=.*\d)(?=.*[a-z])[0-9a-z]{5,}$/, 'i');
+    req.checkBody('password', 'Password must contain at least 1 number').matches(/^(?=.*\d)(?=.*[a-z])[0-9a-z]{5,}$/, 'i');
 
     return handleErrors(req, res, '/signup', next);
 }
@@ -284,7 +320,7 @@ const validLogin = function(req, res, next) {
     req.checkBody('password', 'Password must have at least 5 characters').isLength({
         min: 5
     });
-    req.check("password", "Password must contain at least 1 number").matches(/^(?=.*\d)(?=.*[a-z])[0-9a-z]{5,}$/, "i");
+    req.checkBody("password", "Password must contain at least 1 number").matches(/^(?=.*\d)(?=.*[a-z])[0-9a-z]{5,}$/, "i");
 
     return handleErrors(req, res, '/login', next);
 }
