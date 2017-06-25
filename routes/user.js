@@ -61,6 +61,15 @@ module.exports = (app, passport) => {
         })
     });
 
+    app.get('/auth/facebook', passport.authenticate('facebook', {
+        scope: 'email'
+    }));
+    app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+        successRedirect: '/home',
+        failureRedirect: '/login',
+        failureFlash: true
+    }));
+
     app.get('/signup', (req, res, next) => {
         var errors = req.flash('error');
 

@@ -1,5 +1,7 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
+var secret = require('../secret/secret');
 
 var User = require('../models/user');
 
@@ -19,16 +21,18 @@ passport.use('local.signup', new LocalStrategy({
     passReqToCallback: true
 }, (req, email, password, done) => {
     var newUser = new User();
-   
-    User.findOne({ email }, (err, user) => {
+
+    User.findOne({
+        email
+    }, (err, user) => {
         if (err) {
             return done(err);
         }
 
         if (user) {
             return done(null, false, req.flash('error', 'This email is already registered'));
-        } 
-            
+        }
+
         // passed through input name=fullname
         newUser.fullname = req.body.fullname;
         newUser.email = req.body.email;
@@ -43,7 +47,9 @@ passport.use('local.login', new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true
 }, (req, email, password, done) => {
-    User.findOne({ email }, (err, user) => {
+    User.findOne({
+        email
+    }, (err, user) => {
         var messages = [];
 
         if (err) {
@@ -64,7 +70,9 @@ passport.use('local.forgot', new LocalStrategy({
     usernameField: 'email',
     passReqToCallback: true
 }, (req, email, done) => {
-    User.findOne({ email }, (err, user) => {
+    User.findOne({
+        email
+    }, (err, user) => {
         var messages = [];
 
         if (err) {
@@ -78,5 +86,31 @@ passport.use('local.forgot', new LocalStrategy({
         }
 
         return done(null, user);
+    })
+}));
+
+passport.use(new FacebookStrategy(secret.facebook, (req, token, refreshToken, profile, done) => {
+    User.findOne({
+        facebook: profile.id
+    }, (err, user) => {
+        if (err) {
+            return done(err);
+        }
+
+        if (user) {
+            return done(null, user)
+        } else {
+            var newUser = new User();
+            newUser.facebook = profile.id;
+            newUser.fullname = profile.displayName;
+            newUser.email = profile._json.email;
+            newUser.tokens.push({
+                token: token
+            });
+
+            newUser.save((err) => {
+                return done(null, newUser);
+            });
+        }
     })
 }));
