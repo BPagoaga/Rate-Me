@@ -22,7 +22,8 @@ module.exports = (app, passport) => {
     // home route
     app.get('/home', function(req, res, next) {
         res.render('home', {
-            title: 'Rate Me | Homepage'
+            title: 'Rate Me | Homepage',
+            user: req.user
         });
     });
 
