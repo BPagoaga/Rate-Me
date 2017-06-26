@@ -58,13 +58,13 @@ input[type="submit"] {
     text-align: center;
 }
 
-#colDesc {
-    margin: 50px 20px 0px 70px;
+.colDesc {
+    margin: 50px 20px 0px 60px;
     padding-top: 40px;
     background-color: white;
     height: 350px;
-    float: left;
-    width: 25%;
+    /*float: left;*/
+    width: 24%;
 }
 
 #colDesc h3 {

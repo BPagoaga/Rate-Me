@@ -30,19 +30,19 @@ app.set('view engine', 'ejs');
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({
-    extended: true
+	extended: true
 }));
 app.use(bodyParser.json());
 
 app.use(validator());
 
 app.use(session({
-    secret: 'testkey',
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({
-        mongooseConnection: mongoose.connection
-    })
+	secret: 'testkey',
+	resave: false,
+	saveUninitialized: false,
+	store: new MongoStore({
+		mongooseConnection: mongoose.connection
+	})
 }));
 
 // add passport middleware after the session middleware declaratiuon
@@ -53,7 +53,8 @@ app.use(passport.session());
 
 // user related routes
 require('./routes/user')(app, passport);
+require('./routes/company')(app);
 
 app.listen(3000, function() {
-    console.log('running');
+	console.log('running');
 });
