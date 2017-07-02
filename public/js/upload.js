@@ -1,51 +1,51 @@
 $(document).ready(function() {
-	$('.upload-btn').on('click', function() {
-		$('#upload-input').click()
+    $('.upload-btn').on('click', function() {
+        $('#upload-input').click()
 
-		$('.progress-bar').text('0 %')
-		$('.progress-bar').width('0%')
-	})
+        $('.progress-bar').text('0 %')
+        $('.progress-bar').width('0%')
+    })
 
-	$('#upload-input').on('change', function() {
-		const uploadInput = $('#upload-input').val()
+    $('#upload-input').on('change', function() {
+        const uploadInput = $('#upload-input')
 
-		if (uploadInput != '') {
-			let formData = new FormData()
-			console.log(uploadInput)
-			formData.append('upload', uploadInput[0].files[0])
+        if (uploadInput !== '') {
+            const formData = new FormData()
 
-			$.ajax({
-				url: '/upload',
-				type: 'POST',
-				data: formData,
-				processType: false,
-				contentType: false,
-				success: function(data) {
-					$('#upload-input').val()
-				},
-				xhr: function() {
-					var xhr = new new XMLHttpRequest()
+            formData.append('upload', uploadInput[0].files[0])
 
-					xhr.upload.addEventListener(
-						'progress',
-						function(e) {
-							if (e.lengthComputable) {
-								let uploadPercent = (e.loaded / e.total) * 100
+            $.ajax({
+                url: '/upload',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success() {
+                    $('#upload-input').val()
+                },
+                xhr() {
+                    const xhr = new XMLHttpRequest()
 
-								$('.progress-bar').text(uploadPercent + ' %')
-								$('.progress-bar').width(uploadPercent + '%')
+                    xhr.upload.addEventListener(
+                        'progress',
+                        function(event) {
+                            if (event.lengthComputable) {
+                                const uploadPercent = event.loaded / event.total * 100
+                                $('.progress-bar').text(`${uploadPercent} %`)
+                                $('.progress-bar').width(`${uploadPercent}%`)
 
-								if (uploadPercent == 100) {
-									$('.progress-bar').text('Upload completed')
-								}
-							}
-						},
-						false
-					)
+                                if (uploadPercent === 100) {
+                                    $('.progress-bar').text('Upload completed')
+                                    $('#completed').text('File uploaded')
+                                }
+                            }
+                        },
+                        false
+                    )
 
-					return xhr
-				}
-			})
-		}
-	})
+                    return xhr
+                }
+            })
+        }
+    })
 })

@@ -51,7 +51,8 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-// user related routes
+// routes
+require('./routes/app')(app);
 require('./routes/user')(app, passport);
 require('./routes/company')(app);
 

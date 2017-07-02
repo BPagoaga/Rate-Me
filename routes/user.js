@@ -7,25 +7,6 @@ var User = require('../models/user');
 var secret = require('../secret/secret');
 
 module.exports = (app, passport) => {
-    // general route for the app
-    app.get('/', function(req, res, next) {
-        console.log(req.session.cookie.originalMaxAge)
-        if (req.session.cookie.originalMaxAge !== null) {
-            res.redirect('/home')
-        } else {
-            res.render('index', {
-                title: 'Rate Me'
-            });
-
-        }
-    });
-    // home route
-    app.get('/home', function(req, res, next) {
-        res.render('home', {
-            title: 'Rate Me | Homepage',
-            user: req.user
-        });
-    });
 
     app.get('/login', (req, res, next) => {
         var errors = req.flash('error');
